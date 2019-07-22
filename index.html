@@ -65,20 +65,17 @@ font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 
     map.addLayer({
       'id': 'Hospitals',
-      'type': 'symbol',
+      'type': 'circle',
       'source': "hospitals.geojson",
-      "layout": {
-        "icon-image": "{icon}-15",
-        "text-field": "{NAME}",
-        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-        "text-offset": [0, 0.6],
-        "text-anchor": "top"
-      }
+      "paint": {
+          "circle-radius": 5,
+          "circle-color": "#399283"},
+      "filter": ["==", "$type", "Point"],
     });
 
 // This portion was adapted from from MapBox's documentation
 
-map.on('click', 'zipcodes_wake', function (e) {
+map.on('click', 'Zip Codes', function (e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
 // Creates pop-up for the geojson ZIP Code
@@ -86,17 +83,34 @@ new mapboxgl.Popup()
 .addTo(map);
 });
  
+map.on('click', 'Hospitals', function (e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+// Creates pop-up for the geojson Hospitals Code
+.setHTML(e.features[0].properties.NAME)
+.addTo(map);
+});
+
 // Change the cursor to a pointer when the mouse is over the ZIP Code layer.
-map.on('mouseenter', 'zipcodes_wake', function () {
+map.on('mouseenter', 'Zip Codes', function () {
 map.getCanvas().style.cursor = 'pointer';
 });
  
 // Change it back to a pointer when it leaves the ZIP Code layer
-map.on('mouseleave', 'zipcodes_wake', function () {
+map.on('mouseleave', 'Zip Codes', function () {
 map.getCanvas().style.cursor = '';
+});
 
-    });
-  });
+// Change the cursor to a pointer when the mouse is over the hospital layer.
+map.on('mouseenter', 'Hospitals', function () {
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change it back to a pointer when it leaves the hospitals layer
+map.on('mouseleave', 'Hospitals', function () {
+map.getCanvas().style.cursor = '';
+});
+});
 </script>
 
 </body>
