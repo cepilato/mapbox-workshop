@@ -11,24 +11,93 @@
             #map { position:absolute; top:0; bottom:0; width:100%; }
           </style>
       </head>
-      <body>
-          <div id='map'></div>
-          <script>
-            mapboxgl.accessToken = 'pk.eyJ1IjoiY2VwaWxhdG8iLCJhIjoiY2p5ZGo2YTNnMHJiYjNicHI1aGFoM2l2eSJ9.cEB2IMA24E9z3TH6TbazPA';
+    <body>
+<style>
+.mapboxgl-popup {
+max-width: 400px;
+font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+</style>
 
-            var map = new mapboxgl.Map({
-            container: 'map', // container id
-            style: 'mapbox://styles/mapbox/light-v10', //hosted style id;  
-            //others: 
-            //  'mapbox://styles/mapbox/light-v10'
-            //  'mapbox://styles/mapbox/streets-v10' 
-            //  'mapbox://styles/mapbox/dark-v10'
-            //  'mapbox://styles/mapbox/outdoors-v10'  
-            //  'mapbox://styles/mapbox/satellite-v10' 
-            //  'mapbox://styles/mapbox/traffic-night-v2'
-            center: [-122.268169, 37.808919], // change starting position to coordinates associated w/ your data.
-            zoom: 10 // starting zoom
-            });
-          </script>
-      </body>
-    </html>
+<div id='map'></div>
+  <script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiY2VwaWxhdG8iLCJhIjoiY2p5ZGo2YTNnMHJiYjNicHI1aGFoM2l2eSJ9.cEB2IMA24E9z3TH6TbazPA';
+  var map = new mapboxgl.Map({
+    container: 'map', // Container ID
+    style: 'mapbox://styles/mapbox/light-v10', //Hosted Style ID
+    center: [-78.682706, 35.781114], // change starting position to coordinates associated w/ your data.
+    zoom: 9 // Starting zoom-level
+  });
+  var hoveredStateId =  null;
+  
+  // Adds the ability to move around the map window
+  map.addControl(new mapboxgl.NavigationControl());
+  // Adds the ability to go full-screen
+  map.addControl(new mapboxgl.FullscreenControl());
+
+  var popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false
+  });
+  
+  map.on('load', function () {
+     //  Add source of data
+    map.addSource('zipcodes_wake.geojson', {
+      type: "geojson",
+      data: 'https://raw.githubusercontent.com/cepilato/mapbox-workshop/master/zipcodes_wake.geojson'
+    });
+
+    map.addSource('hospitals.geojson', {
+      type: "geojson",
+      data: 'https://raw.githubusercontent.com/cepilato/mapbox-workshop/master/hospitals.geojson'
+    });
+
+    map.addLayer({
+      'id': 'Zip Codes',
+      'type': 'fill',
+      'source': "zipcodes_wake.geojson",
+      'paint': {
+      'fill-color': 'rgba(57,146,131, 0.4)',
+      'fill-outline-color': 'rgba(57,146,131, 1)',
+      "fill-opacity": 0.5
+      }
+    });
+
+    map.addLayer({
+      'id': 'Hospitals',
+      'type': 'symbol',
+      'source': "hospitals.geojson",
+      "layout": {
+        "icon-image": "{icon}-15",
+        "text-field": "{NAME}",
+        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+        "text-offset": [0, 0.6],
+        "text-anchor": "top"
+      }
+    });
+
+// This portion was adapted from from MapBox's documentation
+
+map.on('click', 'zipcodes_wake', function (e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+// Creates pop-up for the geojson ZIP Code
+.setHTML(e.features[0].properties.NAME)
+.addTo(map);
+});
+ 
+// Change the cursor to a pointer when the mouse is over the ZIP Code layer.
+map.on('mouseenter', 'zipcodes_wake', function () {
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change it back to a pointer when it leaves the ZIP Code layer
+map.on('mouseleave', 'zipcodes_wake', function () {
+map.getCanvas().style.cursor = '';
+
+    });
+  });
+</script>
+
+</body>
+</html>
