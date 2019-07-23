@@ -163,8 +163,6 @@ map.on('mouseleave', 'Hospitals', function () {
 map.getCanvas().style.cursor = '';
 });
 
-// Create a left-side bar aligned menu
-
 var toggleableLayerIds = [ 'Zip Codes', 'Hospitals' ];
 
 for (var i = 0; i < toggleableLayerIds.length; i++) {
@@ -194,6 +192,7 @@ map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
 var layers = document.getElementById('menu');
 layers.appendChild(link);
 }
+
 });
 </script>
 
